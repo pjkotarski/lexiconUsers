@@ -1,20 +1,52 @@
-const User = function(_id, firstName, lastName, email, password, passSalt, words) { 
-    this._id = _id || undefined;
-    this.firstName = firstName || undefined;
-    this.lastName = lastName || undefined;
-    this.email = email || undefined;
-    this.password = password || undefined;
-    this.passSalt = passSalt || undefined;
-    this.words = words || {};
-};
+let mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-User.prototype.getId = function() { 
-    return this._id;
-};
+let UserSchema = new mongoose.Schema({
+    firstName: { 
+        type: String, 
+        index: true,
+        required : true
+    },
+    lastName: { 
+        type: String,
+        index: true,
+        required: true
+    }, 
+    email: {
+        type: String, 
+        index: true, 
+        required: true,
+        unique: true,
+        lowercase: true,
+        dropDups: true
+    }, 
+    hashedPassword: {
+        type: String,
+        index: true,
+        required: true
+    },
+    words: {
+        type: Array, 
+        index: true,
+        required: true
+    }
+});
 
-User.prototype.getWords = function() { 
-    return this.words;
-};
 
+UserSchema.methods.saveUser = function() { 
+    return this.save()
+}   
 
-module.exports = User;
+UserSchema.methods.verifyPassword = function(password) { 
+    return bcrypt.compare(password, this.hashedPassword)
+}
+
+UserSchema.statics.checkForEmail = function(email){ 
+    return this.count({"email" : email})
+}
+
+UserSchema.statics.getMatchingEmail = function(email) {
+    return this.findOne({"email" : email})
+}
+
+module.exports = mongoose.model('User', UserSchema);
