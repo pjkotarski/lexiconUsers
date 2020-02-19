@@ -16,3 +16,31 @@ exports.createUser = function(req, res) {
         .catch(err => res.send(err))
 }
 
+exports.loginUser = (req, res) => {
+
+    let loginObject = req.body.loginObject;
+
+    if (!loginObject) res.status(404).send({"error" : "Could not get Login Object"});
+
+    UserModel.getMatchingEmail(loginObject.email)
+        .then(user => {
+
+            if (!user) res.status(404).send({"error" : "user not found"})
+
+            user.verifyPassword(loginObject.password)
+                .then(resp => {
+                    if (resp) { 
+                        res.send(JSON.stringify(user))
+                    }else { 
+                        res.status(401).send({"error" : "incorrect password"})
+                    }
+                }).catch(err => res.send(err))
+
+
+
+        }).catch(err => {
+            res.send(err)
+        })
+}
+
+

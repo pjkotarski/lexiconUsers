@@ -3,6 +3,7 @@ const passValidator = require('password-validator');
 const validator = require('validator');
 const UserModel = require('../models/user');
 
+//For Account Creation Middleware
 exports.encrypt = (req, res, next) => {
 
     const saltRounds = 10
@@ -39,6 +40,10 @@ exports.validate = (req, res, next) => {
     }
 }
 
+//^^^Account Creation Middleware 
+
+// ????? Middleware
+
 exports.checkForEmail = function(req, res, next) { 
     let email = req.body.email;
 
@@ -54,3 +59,27 @@ exports.checkForEmail = function(req, res, next) {
         })
         .catch(err => res.send(err))
 }
+
+// ??? Middleware 
+
+// Login Middleware 
+
+// in this method you could weed out login objects that don't make sense. 
+exports.createLoginObject = (req, res, next) => { 
+
+    if (req.body.email && req.body.password) { 
+
+        const loginObject = {
+            email : req.body.email,
+            password : req.body.password
+        }
+
+        req.body.loginObject = loginObject
+
+        next()
+
+    } else { 
+        res.status(400).send({"error" : "Improper object"})
+    }
+}
+
