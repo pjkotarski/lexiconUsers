@@ -1,6 +1,5 @@
 const UserModel = require('../models/user');
 const bcrypt = require('bcrypt');
-const passport = require('passport');
 
 exports.createUser = function(req, res) { 
     
@@ -15,19 +14,5 @@ exports.createUser = function(req, res) {
     newUser.saveUser()
         .then(doc => res.send(doc.toObject()))
         .catch(err => res.send(err))
-}
-
-//I honestly think passport js is so fucking stupid 
-
-//custom callback for passport js
-exports.authUser = (req, res) => {
-    passport.authenticate('local', (err, user) => {
-    
-        if (err) res.status(400).send(err);
-
-        if (!user) res.status(204).send({"errorMessage" : "could not authenticate"})
-        
-        return res.send({"you did it": "you fucking did it"}) 
-    })(req, res)
 }
 

@@ -1,7 +1,6 @@
 const express = require('express');
 const usersRouter = require('./routes/user_routes');
 const bodyParser = require('body-parser');
-const passport = require('passport');
 
 
 
@@ -10,9 +9,6 @@ require('dotenv').config();
 const app = express();
 
 require('./src/databse')
-app.use(passport.initialize());
-app.use(passport.session());
-require('./middlewares/passport');
 
 
 app.use(bodyParser.json());
